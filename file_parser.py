@@ -25,14 +25,15 @@ def lspci_parse(text):
 					device.bus = int(group[0:2], 16)
 					device.device = int(group[3:5], 16)
 					device.function = int(group[6:7], 16)
-					print "device number: {0} : {1} . {2}".format(device.bus, device.device, device.function)
+					print("device number: {0} : {1} . {2}".format(device.bus, device.device, device.function))
 				if head_group_name_by_index[group_index+1] == "id" :
 					device.id = group.split(":")
-					print(device.id)
+					print("device id : {0}".format(device.id))
 				if head_group_name_by_index[group_index+1] == "name" :
 					device.name = group
+					print("device name : {0}".format(device.name))
 				
-				print "{0}: {1}".format(head_group_name_by_index[group_index+1], group)
+			#	print("{0}: {1}".format(head_group_name_by_index[group_index+1], group))
 
 		devices.append(device)
 	
@@ -42,9 +43,10 @@ def lspci_parse(text):
 	for match in pci_regs :
 		for group_index, group in enumerate(match.groups()) :
 			if group :
+				print(group)
 				if space_group_name_by_index[group_index+1] == "registers" :
 					devices[count].space.append(group.split(" "))
-					print devices[count].space
+					print(devices[count].space)
 					count += count
 
 lspci_log = open("lspci.log", "r")
