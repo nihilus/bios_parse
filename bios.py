@@ -13,6 +13,9 @@
 # acpidump > acpitable.log
 # dmesg > dmesg.log
 #
+# You also nee these python libraries:
+# 1. PLY - http://www.dabeaz.com/ply/
+# 2. pycparser - http://code.google.com/p/pycparser/
 
 import idc
 import idaapi
@@ -91,9 +94,14 @@ def ports_analisys():
 def pci_analisys():
 	# searching snippets:
 	# ------------------- 
-	# mov eax, 8000xxxxh
+	# mov eax, 8000xxxxh ; optional line
 	# mov dx, CF8h
 	# out dx, eax
+	# -------------------
+	# mov dx, CF8h
+	# mov eax, 8000xxxxh
+	# out dx, eax
+	# -------------------
 
 # ******************************************** PARSE LOGS ********************************************
 

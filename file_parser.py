@@ -7,14 +7,13 @@ def lspci_parse(text):
 	devices = []
 
 	pci_devnum = re.compile("(?m)^(?P<devnum>[\dA-Fa-f]{2}:[\dA-Fa-f]{2}.[\dA-Fa-f])(?P<class>.*)\[(?P<some>[\dA-Fa-f]{4})\]:(?P<name>.*)\[(?P<id>[\dA-Fa-f]{4}:[\dA-Fa-f]{4})\]")
-	pci_space = re.compile("(?m)^[\dA-Fa-f]{2,4}:(?P<registers>([\dA-Fa-f]{2} ){16})$")
+	pci_space = re.compile("(?m)^(?P<line>[\dA-Fa-f]{2,4}):(?P<registers>( [\dA-Fa-f]{2}){16})$")
 
 	head_group_name_by_index = dict( [ (v, k) for k, v in pci_devnum.groupindex.items() ])
 	space_group_name_by_index = dict( [ (v, k) for k, v in pci_space.groupindex.items() ])
 
 	pci_num = pci_devnum.finditer(text)
-	pci_regs = pci_space.finditer(text)
-	
+		
 	# fill generic PCI information in PCI object
 
 	for match in pci_num :
@@ -39,15 +38,22 @@ def lspci_parse(text):
 	
 	# fill registers values
 
-	count = 0;
+	lines_count = 0;
+	device_count = 0;
+	
+	pci_regs = pci_space.finditer(text)
+
 	for match in pci_regs :
 		for group_index, group in enumerate(match.groups()) :
 			if group :
-				print(group)
+				# print(group)
 				if space_group_name_by_index[group_index+1] == "registers" :
-					devices[count].space.append(group.split(" "))
-					print(devices[count].space)
-					count += count
+					devices[device_count].space += group.split(" ")
+					print(devices[device_count].space)
+				if space_group_name_by_index[group_index+1] == "line" :
+					lines_count += 1
+					if group == "00":
+						device_count += 1
 
 lspci_log = open("lspci.log", "r")
 lspci = lspci_log.read()
