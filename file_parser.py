@@ -38,7 +38,7 @@ def lspci_parse(text):
 	
 	# fill registers values
 
-	line = 0;
+	line = -1;
 	device_count = -1;
 	
 	pci_regs = pci_space.finditer(text)
@@ -50,12 +50,13 @@ def lspci_parse(text):
 					line += 1
 					if group == "00":
 						device_count += 1
+						line = -1
 						print("{0}:{1}.{2}".format(hex(devices[device_count].bus), hex(devices[device_count].device), hex(devices[device_count].function))) 
 						print("	| Name: {0} ID: {1}".format(devices[device_count].name, devices[device_count].id))
 						print("______")
 				if space_group_name_by_index[group_index+1] == "registers" :
 					devices[device_count].space.append(group[1:].split(" "))
-					#print(devices[device_count].space[line])
+					print(devices[device_count].space[line])
 				
 lspci_log = open("lspci.log", "r")
 lspci = lspci_log.read()
