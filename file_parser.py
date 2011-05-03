@@ -51,12 +51,14 @@ def lspci_parse(text):
 					if group == "00":
 						device_count += 1
 						line = -1
-						print("{0}:{1}.{2}".format(hex(devices[device_count].bus), hex(devices[device_count].device), hex(devices[device_count].function))) 
+						print("{0}:{1}.{2}".format(hex(devices[device_count].bus), hex(devices[device_count].device), hex(devices[device_count].function)))
+						bios_num = 0x80000000 + (devices[device_count].bus << 16) + (devices[device_count].device << 11) + (devices[device_count].function << 8)
+						print("For BIOS: {0}".format(hex(bios_num)))
 						print("	| Name: {0} ID: {1}".format(devices[device_count].name, devices[device_count].id))
 						print("______")
 				if space_group_name_by_index[group_index+1] == "registers" :
 					devices[device_count].space.append(group[1:].split(" "))
-					print(devices[device_count].space[line])
+					# print(devices[device_count].space[line])
 
 	return devices
 				
