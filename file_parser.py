@@ -57,6 +57,8 @@ def lspci_parse(text):
 				if space_group_name_by_index[group_index+1] == "registers" :
 					devices[device_count].space.append(group[1:].split(" "))
 					print(devices[device_count].space[line])
+
+	return devices
 				
 lspci_log = open("lspci.log", "r")
 lspci = lspci_log.read()

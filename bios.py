@@ -36,7 +36,7 @@ import msr-intel
 def msr_parse():
 	start = idc.MinEA()
 	stop = idc.MaxEA()
-	rdmsr_addr = idaapi.find_binary(start, stop, "0F 32", 0, 0) # find_binary(ea_t startea, ea_t endea, char ubinstr, int radix, int sflag) -> ea_t
+	rdmsr_addr = idaapi.find_binary(start, stop, "0F 32", 0, 0) 
 	wrmsr_addr = idaapi.find_binary(start, stop, "0F 30", 0, 0)
 	cpuid_addr = idaapi.find_binary(start, stop, "0F A2", 0, 0)
 	idc.MakeCode(each)
@@ -102,6 +102,16 @@ def pci_analisys():
 	# mov eax, 8000xxxxh
 	# out dx, eax
 	# -------------------
+	position_start = idc.MinEA()
+	position_stop = idc.MaxEA()
+	outdxeax = position_start
+	while outdxeax :
+		outdxeax = idaapi.find_binary(position_start, position_stop, "66 EF", 0, 0)
+		if outdxeax:
+			position_start = outdxeax + 1
+
+
+	# for FLIRT signatures: idaapi.apply_idasgn_to(char signame, ea_t ea, bool is_startup) -> int
 
 # ******************************************** PARSE LOGS ********************************************
 
@@ -127,7 +137,7 @@ def import_data_dumps():
 				data = {}
 				data[match.group("key")] = int(match.group("value"))
 			return True
-		except (EnviromentError) as err:
+		except (RuntimeError) as err:
 			print "import error"
 			return False
 		finally:
@@ -187,5 +197,8 @@ def big_endian(n):
 
 # 1. Try to find Stings for the BIOS Vendor
 # 2. Add standard HW adresses
+
+def relocate():
+	pass
 
 

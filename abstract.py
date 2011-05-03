@@ -23,6 +23,34 @@ class PCI_dev:
 		self.function = function
 		self.name = name
 		self.space = []
+		self.header = [
+		#   Register Value | Register Name | Register Description
+			['', "DeviceID", "Device ID"],
+			['', "VendorID", "Vendor ID"],
+			['', "Status", "Status"],
+			['', "Command", "Command"],
+			['', "ClassCode", "Class Code"],
+			['', "RevID", "Revision ID"],
+			['', "BIST", "BIST"],
+			['', "HeaderType", "Header Type"],
+			['', "LatencyTimer", "Latency Timer"],
+			['', "CacheLineSize", "CacheLineSize"],
+			['', "BAR0", "Base Address Register 0"],
+			['', "BAR1", "Base Address Register 1"],
+			['', "BAR2", "Base Address Register 2"],
+			['', "BAR3", "Base Address Register 3"],
+			['', "BAR4", "Base Address Register 4"],
+			['', "BAR5", "Base Address Register 5"],
+			['', "CardbusCIS", "Cardbus CIS Pointer"],
+			['', "SubsystemID", "Subsystem ID"],
+			['', "SubsystemVID", "Subsystem Vendor ID"],
+			['', "ExpansionBase", "Expansion ROM Base Address"],
+			['', "CapPointer", "Capabilities Pointer"],
+			['', "Max_Lat", ""],
+			['', "Min_Gnt", ""],
+			['', "InterruptPin", "Interrupt PIN"],
+			['', "InterruptLine", "Interrupt Line"]
+		]
 
 	@property
 	def bus(self):
@@ -72,3 +100,15 @@ class PCI_dev:
 	def space(self, space):
 		self._space = space
 
+	@property
+	def header(self):
+		return self._header
+
+	@header.setter
+	def header(self, header):
+		self._header = header
+
+	def register(self, address):
+		return self.space[address//16][address%16]
+	
+	
