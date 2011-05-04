@@ -62,7 +62,7 @@ def lspci_parse(text):
 
 	return devices
 				
-lspci_log = open("lspci.log", "r")
+lspci_log = open("/home/xvilka/lspci.log", "r")
 lspci = lspci_log.read()
 lspci_parse(lspci)
 lspci_log.close()
