@@ -24,16 +24,11 @@ def lspci_parse(text):
 					device.bus = int(group[0:2], 16)
 					device.device = int(group[3:5], 16)
 					device.function = int(group[6:7], 16)
-					# print("device number: {0} : {1} . {2}".format(device.bus, device.device, device.function))
 				if head_group_name_by_index[group_index+1] == "id" :
 					device.id = group.split(":")
-					# print("device id : {0}".format(device.id))
 				if head_group_name_by_index[group_index+1] == "name" :
 					device.name = group
-					# print("device name : {0}".format(device.name))
 				
-			#	print("{0}: {1}".format(head_group_name_by_index[group_index+1], group))
-
 		devices.append(device)
 	
 	# fill registers values
@@ -61,8 +56,70 @@ def lspci_parse(text):
 					# print(devices[device_count].space[line])
 
 	return devices
+
+def inteltool_parse(text):
+	
+	bridge = abstract.Bridge()
+
+	bar_re =  re.compile("(?m)^(?P<barname>[A-Z]{4,}) = (?P<barvalue>0x[\dA-Fa-f]{4,8})")
+	bar_group_name_by_index = dict( [ (v, k) for k, v in bar_re.groupindex.items() ])
+	gpio_re = re.compile("(?m)^gpiobase\+(?P<address>0x[\dA-Fa-f]{4})\: (?P<value>0x[\dA-Fa-f]{1,8})\s+\((?P<name>[\w]{1,})\)")
+	gpio_group_name_by_index = dict( [ (v, k) for k, v in gpio_re.groupindex.items() ])
+	pm_re = re.compile("(?m)^pmbase\+(?P<address>0x[\dA-Fa-f]{4})\: (?P<value>0x[\dA-Fa-f]{1,8})\s+\((?P<name>[\w]{1,})\)")
+	pm_group_name_by_index = dict( [ (v, k) for k, v in pm_re.groupindex.items() ])
+
+	bar = bar_re.finditer(text)
+	for match in bar :
+		for group_index, group in enumerate(match.groups()) :
+			if group :
+				if bar_group_name_by_index[group_index+1] == "barname" :
+					prev_group = group
+				if bar_group_name_by_index[group_index+1] == "barvalue" :
+					bridge.BAR[prev_group] = group
+
+	for item in bridge.BAR.items():
+		print(item)
+
+	gpio = gpio_re.finditer(text)
+	for match in gpio :
+		gpio_reg = []
+		for group_index, group in enumerate(match.groups()) :
+			if group :
+				if gpio_group_name_by_index[group_index+1] == "address" :
+					gpio_reg.append(group)
+				if gpio_group_name_by_index[group_index+1] == "value" :
+					gpio_reg.append(group)
+				if gpio_group_name_by_index[group_index+1] == "name" :
+					gpio_reg.append(group)
+		bridge.GPIO.append(gpio_reg)
+
+	for item in bridge.GPIO:
+		print(item)
+
+	pm = pm_re.finditer(text)
+	for match in pm :
+		pm_reg = []
+		for group_index, group in enumerate(match.groups()) :
+			if group :
+				if pm_group_name_by_index[group_index+1] == "address" :
+					pm_reg.append(group)
+				if pm_group_name_by_index[group_index+1] == "value" :
+					pm_reg.append(group)
+				if pm_group_name_by_index[group_index+1] == "name" :
+					pm_reg.append(group)
+		bridge.PM.append(pm_reg)
+
+	for item in bridge.PM:
+		print(item)
+
+
+
 				
-lspci_log = open("/home/xvilka/lspci.log", "r")
+lspci_log = open("/home/xvilka/RE/vostro/lspci.log", "r")
 lspci = lspci_log.read()
 lspci_parse(lspci)
 lspci_log.close()
+inteltool_log = open("/home/xvilka/RE/vostro/inteltool.log", "r")
+inteltool = inteltool_log.read()
+inteltool_parse(inteltool)
+inteltool_log.close()

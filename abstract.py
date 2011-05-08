@@ -1,4 +1,4 @@
-class BIOS_Function:
+class BIOS_Function(object):
 	def __init__(self, name, attributes, body_disasm, body_binary, signature):
 		self.name = name
 		self.attributes = attributes
@@ -16,7 +16,7 @@ class BIOS_Function:
 		return signature # sha1 hash of body_binary
 
 
-class PCI_dev:
+class PCI_dev(object):
 	def __init__(self, bus = 0, device = 0, function = 0, name = ""):
 		self.bus = bus
 		self.device = device
@@ -110,5 +110,86 @@ class PCI_dev:
 
 	def register(self, address):
 		return self.space[address//16][address%16]
+
+
+class Bridge(PCI_dev):
+	def __init__(self):
+		super(Bridge, self).__init__()
+		self.BAR = {
+			"GPIOBASE" : 0x0,
+			"PMBASE" : 0x0,
+			"RCBA" : 0x0,
+			"MCHBAR" : 0x0,
+			"EPBAR" : 0x0,
+			"DMIBAR" : 0x0
+			}
+		self.GPIO = []
+		self.PM = []
+		self.RCB = []
+		self.MCH = []
+		self.EP = []
+		self.DMI = []
+
+		
+	@property
+	def BAR(self):		# Base Adress Register Array
+		return self._bar
+	
+	@BAR.setter
+	def BAR(self, BAR):
+		self._bar = BAR
+
+	@property   
+	def GPIO(self):    # General Purpose I/O
+		return self._gpio
+
+	@GPIO.setter
+	def GPIO(self, GPIO):
+		self._gpio = GPIO
+
+	@property
+	def PM(self):	   # Power Management
+		return self._pm
+
+	@PM.setter
+	def PM(self, PM):
+		self._pm = PM
+
+	@property
+	def RCB(self):		# Root Complex Bus
+		return self._rcb
+
+	@RCB.setter
+	def RCB(self, RCB):
+		self._rcb = RCB
+
+	@property   
+	def MCH(self):    # General Purpose I/O
+		return self._mch
+
+	@MCH.setter
+	def MCH(self, MCH):
+		self._mch = MCH
+
+	@property
+	def EP(self):	   # Egress Port Root Complex
+		return self._ep
+
+	@EP.setter
+	def EP(self, EP):
+		self._ep = EP
+
+	@property
+	def DMI(self):		# MCH-ICH Serial Interconnect Ingress Root Complex
+		return self._dmi
+
+	@DMI.setter
+	def DMI(self, DMI):
+		self._dmi = DMI
+
+
+
+
+	
 	
 	
